@@ -1,45 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fancy Form</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-  <link href="style.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
 </head>
-
-<body>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100">
-    <form onsubmit="return !1" class="bg-white p-6 rounded shadow-md w-full max-w-md">
-      <h1 class="text-2xl font-bold mb-6">Swap</h1>
-
-      <div class="mb-4">
-        <label for="from-token" class="block text-sm font-medium text-gray-700">From</label>
-        <div class="mt-1 flex">
-          <select id="from-token" class="block w-1/3 mr-2 py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            <option value="">Select token</option>
-          </select>
-          <input id="input-amount" type="number" class="block w-2/3 py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Amount">
+<body class="bg-gray-900 text-white">
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="w-full max-w-2xl bg-gray-800 p-12 rounded-lg shadow-lg">
+            <div class="flex justify-between items-center mb-8">
+                <div class="text-3xl font-bold">Currency Converter</div>
+            </div>
+            <form onsubmit="return !1">
+                <div class="mb-8">
+                    <label for="input-amount" class="block text-lg font-medium">Enter Amount</label>
+                    <div class="flex mt-2">
+                        <input id="input-amount" type="number" class="block w-3/4 py-4 px-6 bg-gray-700 border border-gray-600 rounded-l-md focus:outline-none text-lg" placeholder="Amount">
+                        <select id="from-token" class="block w-1/4 py-4 px-6 bg-gray-700 border border-gray-600 rounded-r-md focus:outline-none text-lg">
+                            <option value="">Select</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-center my-8">
+                    <button type="button" class="bg-gray-700 p-6 rounded-full text-lg transform transition-transform hover:scale-110" onclick="swapCurrencies()">&#x21c5;</button>
+                </div>
+                <div class="mb-8">
+                    <label for="output-amount" class="block text-lg font-medium">Converted Amount</label>
+                    <div class="flex mt-2">
+                        <input id="output-amount" type="number" class="block w-3/4 py-4 px-6 bg-gray-700 border border-gray-600 rounded-l-md focus:outline-none text-lg" placeholder="Amount" readonly>
+                        <select id="to-token" class="block w-1/4 py-4 px-6 bg-gray-700 border border-gray-600 rounded-r-md focus:outline-none text-lg">
+                            <option value="">Select</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="error-message" class="text-red-500 mb-4 text-lg"></div>
+                <button type="button" onclick="handleSwap()" class="bg-purple-600 text-white py-4 px-8 rounded-lg w-full text-lg hover:bg-purple-700">Convert</button>
+            </form>
+            <div class="mt-4 text-lg text-gray-400" id="exchange-rate-info"></div>
         </div>
-      </div>
-
-      <div class="mb-4">
-        <label for="to-token" class="block text-sm font-medium text-gray-700">To</label>
-        <div class="mt-1 flex">
-          <select id="to-token" class="block w-1/3 mr-2 py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            <option value="">Select token</option>
-          </select>
-          <input id="output-amount" type="number" class="block w-2/3 py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Amount" readonly>
-        </div>
-      </div>
-
-      <div id="error-message" class="text-red-500 mb-4"></div>
-
-      <button onclick="handleSwap()" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 w-full">CONFIRM SWAP</button>
-    </form>
-  </div>
-  <script src="script.js"></script>
+    </div>
+    <script src="script.js"></script>
 </body>
-
 </html>
