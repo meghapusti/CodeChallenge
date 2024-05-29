@@ -1,0 +1,30 @@
+var sum_to_n_a = function(n) {
+
+    // Initialize a variable to store the sum
+    var sum = 0;
+    // Loop through numbers from 1 to n 
+    for (var i = 1; i <= n; i++) {
+    // Add each number to the sum
+        sum += i;
+  }
+    // Return the sum
+    return sum;
+};
+
+var sum_to_n_b = function(n) {
+    // Base case: If n is 1, return 1 (the sum of 1)
+    if (n === 1) {
+        return 1;
+    } else {
+        // Return n + the sum of n-1 (recursive call)
+        return n + sum_to_n_b(n - 1);
+    }
+};
+
+
+var sum_to_n_c = function(n) {
+    // Use the formula for the sum of an arithmetic series: n * (n + 1) / 2
+    return n * (n + 1) / 2;
+};
+
+
