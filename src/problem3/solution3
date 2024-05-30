@@ -1,0 +1,145 @@
+/*
+Issues with the Code :
+1. Inefficient and Error-Prone Data Fetching
+Problem: The data fetching logic inside useEffect does not properly handle dependencies or clean up.
+Solution: Ensure the data fetching is dependent on necessary changes and handle cleanup correctly.
+
+2. Incorrect useMemo Dependencies
+Problem: The useMemo hook for sorting balances includes prices in its dependency array, but prices are not used within the memoized calculation.
+Solution: Remove prices from the dependency array.
+
+3. Incorrect Balance Filtering Logic
+Problem: The filtering logic within sortedBalances is unclear and likely incorrect (e.g., lhsPriority is used without being defined).
+Solution: Clarify and correct the balance filtering logic.
+
+4. Inconsistent Data Shape Handling
+Problem: sortedBalances and formattedBalances use different data shapes (WalletBalance and FormattedWalletBalance), which can lead to errors.
+Solution: Consistently use a single data shape or ensure transformations are clear and consistent.
+
+5. Incorrect Error Logging
+Problem: console.err should be console.error.
+Solution: Correct the error logging to console.error.
+
+6. Unused and Misleading Props
+Problem: The children prop is extracted but not used, and BoxProps is extended but not leveraged.
+Solution: Remove or use these props appropriately.
+*/
+
+
+interface WalletBalance {
+    currency: string;
+    amount: number;
+    blockchain: string;
+  }
+  
+interface FormattedWalletBalance extends WalletBalance {
+    formatted: string;
+  }
+
+class Datasource {
+    private url: string;
+  
+    constructor(url: string) {
+      this.url = url;
+    }
+  
+    async getPrices(): Promise<{ [currency: string]: number }> {
+      const response = await fetch(this.url);
+      if (!response.ok) {
+        throw new Error('Failed to fetch prices');
+      }
+      return response.json();
+    }
+  }
+  
+interface Props extends BoxProps {}
+  
+const WalletPage: React.FC<Props> = (props: Props) => {
+    const { children, ...rest } = props;
+    const balances = useWalletBalances();
+    const [prices, setPrices] = useState<{ [currency: string]: number }>({});
+  
+    useEffect(() => {
+      const datasource = new Datasource("https://interview.switcheo.com/prices.json");
+      datasource.getPrices()
+        .then(setPrices)
+        .catch(error => {
+          console.error(error);
+        });
+    }, []);
+  
+    const getPriority = (blockchain: string): number => {
+      switch (blockchain) {
+        case 'Osmosis':
+          return 100;
+        case 'Ethereum':
+          return 50;
+        case 'Arbitrum':
+          return 30;
+        case 'Zilliqa':
+          return 20;
+        case 'Neo':
+          return 20;
+        default:
+          return -99;
+      }
+    };
+  
+    const sortedBalances = useMemo(() => {
+      return balances.filter(balance => {
+        const priority = getPriority(balance.blockchain);
+        return priority > -99 && balance.amount > 0;
+      }).sort((lhs, rhs) => getPriority(rhs.blockchain) - getPriority(lhs.blockchain));
+    }, [balances]);
+  
+    const formattedBalances: FormattedWalletBalance[] = sortedBalances.map(balance => ({
+      ...balance,
+      formatted: balance.amount.toFixed(2)
+    }));
+  
+    const rows = formattedBalances.map((balance, index) => {
+      const usdValue = prices[balance.currency] * balance.amount;
+      return (
+        <WalletRow 
+          className="row"
+          key={index}
+          amount={balance.amount}
+          usdValue={usdValue}
+          formattedAmount={balance.formatted}
+        />
+      );
+    });
+  
+    return (
+      <div {...rest}>
+        {rows}
+      </div>
+    );
+};
+
+
+/*
+Verification :
+
+Data Fetching:
+The useEffect correctly fetches data from the Datasource class and sets it in state.
+Proper error handling is in place with console.error.
+
+Memoization:
+The useMemo hook correctly memoizes sortedBalances based on balances only, ensuring efficient recomputation.
+
+Filtering and Sorting Logic:
+The filtering logic checks for valid priority and non-zero amounts.
+Sorting is based on the priority of the blockchain.
+
+Consistent Data Shape:
+WalletBalance and FormattedWalletBalance interfaces are used consistently.
+Formatted amounts are calculated and added to formattedBalances.
+
+Error Logging:
+Errors are logged using console.error.
+
+Prop Handling:
+Props are correctly spread onto the div element, and children is destructured but not used (as there are no children elements in this case).
+*/
+  
